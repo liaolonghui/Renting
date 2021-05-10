@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 // antd-mobile的样式
 import 'antd-mobile/dist/antd-mobile.css';
+// 全局样式
+import './index.css';
 
 
 ReactDOM.render(
