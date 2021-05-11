@@ -1,115 +1,78 @@
 import React from 'react'
 import { Route } from 'react-router-dom'
+import Index from '../Index'
+import HouseList from '../HouseList'
 import News from '../News'
+import Profile from '../Profile'
 // tabbar
 import { TabBar } from 'antd-mobile'
 // 导入组件样式
 import './index.css'
 
+
+// TabBar的数据
+const tabItems = [
+  {
+    title: '首页',
+    icon: 'icon-index',
+    path: '/home/index'
+  },
+  {
+    title: '找房',
+    icon: 'icon-search',
+    path: '/home/list'
+  },
+  {
+    title: '资讯',
+    icon: 'icon-icon_fuben',
+    path: '/home/news'
+  },
+  {
+    title: '我的',
+    icon: 'icon-my',
+    path: '/home/profile'
+  }
+]
+
+
 export default class Home extends React.Component {
 
   state = {
-    selectedTab: 'blueTab', // 默认选中的tab菜单
+    selectedTab: this.props.location.pathname, // 默认选中的tab菜单
   }
 
-  // 渲染tabbarItem的内容的函数
-  renderContent(pageText) {
-    return (
-      <div style={{ backgroundColor: 'white', height: '100%', textAlign: 'center' }}>
-        <div style={{ paddingTop: 60 }}>Clicked “{pageText}” tab， show “{pageText}” information</div>
-          <a href style={{ display: 'block', marginTop: 40, marginBottom: 20, color: '#108ee9' }}
-            onClick={(e) => {
-              e.preventDefault();
-              this.setState({
-                hidden: !this.state.hidden,
-              });
-            }}
-          >
-            Click to show/hide tab-bar
-          </a>
-          <a href style={{ display: 'block', marginBottom: 600, color: '#108ee9' }}
-            onClick={(e) => {
-              e.preventDefault();
-              this.setState({
-                fullScreen: !this.state.fullScreen,
-              });
-            }}
-          >
-            Click to switch fullscreen
-          </a>
-        </div>
-      );
-    }
+  // 渲染TabBarItem
+  renderTabBarItem() {
+    return tabItems.map(item => {
+      return (<TabBar.Item
+        title={ item.title }
+        key={ item.title }
+        icon={ <i className={`iconfont ${item.icon}`}></i> }
+        selectedIcon={ <i className={`iconfont ${item.icon}`}></i> }
+        selected={this.state.selectedTab === item.path}
+        onPress={() => {
+          this.setState({
+            selectedTab: item.path,
+          })
+          // 路由切换
+          this.props.history.push(item.path)
+        }}
+      />)
+    })
+  }
 
   render() {
     return (
       <div className="home">
         {/* 路由配置 */}
+        <Route path="/home/index" component={ Index }></Route>
+        <Route path="/home/list" component={ HouseList }></Route>
         <Route path="/home/news" component={ News }></Route>
+        <Route path="/home/profile" component={ Profile }></Route>
         
         {/* tabbar */}
-        <TabBar
-          tintColor="#21b97a"
-          barTintColor="white"
-        >
-          <TabBar.Item
-            title="首页"
-            key="Life"
-            icon={ <i className="iconfont icon-index"></i> }
-            selectedIcon={ <i className="iconfont icon-index"></i> }
-            selected={this.state.selectedTab === 'blueTab'}
-            onPress={() => {
-              this.setState({
-                selectedTab: 'blueTab',
-              });
-            }}
-            data-seed="logId"
-          >
-            {this.renderContent('Life')}
-          </TabBar.Item>
-          <TabBar.Item
-            icon={ <i className="iconfont icon-search"></i> }
-            selectedIcon={ <i className="iconfont icon-search"></i> }
-            title="找房"
-            key="Koubei"
-            selected={this.state.selectedTab === 'redTab'}
-            onPress={() => {
-              this.setState({
-                selectedTab: 'redTab',
-              });
-            }}
-            data-seed="logId1"
-          >
-            {this.renderContent('Koubei')}
-          </TabBar.Item>
-          <TabBar.Item
-            icon={ <i className="iconfont icon-icon_fuben"></i> }
-            selectedIcon={ <i className="iconfont icon-icon_fuben"></i> }
-            title="资讯"
-            key="Friend"
-            selected={this.state.selectedTab === 'greenTab'}
-            onPress={() => {
-              this.setState({
-                selectedTab: 'greenTab',
-              });
-            }}
-          >
-            {this.renderContent('Friend')}
-          </TabBar.Item>
-          <TabBar.Item
-            icon={ <i className="iconfont icon-my"></i> }
-            selectedIcon={ <i className="iconfont icon-my"></i> }
-            title="我的"
-            key="my"
-            selected={this.state.selectedTab === 'yellowTab'}
-            onPress={() => {
-              this.setState({
-                selectedTab: 'yellowTab',
-              });
-            }}
-          >
-            {this.renderContent('My')}
-          </TabBar.Item>
+        <TabBar tintColor="#21b97a" barTintColor="white" noRenderContent>
+          { this.renderTabBarItem() }
         </TabBar>
       </div>
     )
