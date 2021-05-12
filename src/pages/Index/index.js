@@ -9,7 +9,7 @@ import Nav3 from '../../assets/images/nav-3.png'
 import Nav4 from '../../assets/images/nav-4.png'
 
 // 导入样式
-import './index.css'
+import './index.scss'
 
 // 导航菜单数据用于渲染导航菜单
 const navs = [
@@ -42,6 +42,7 @@ export default class Index extends React.Component {
     super(props)
     this.state = {
       swipers: [], // 轮播图数据
+      isSwiperLoaded: false, // 轮播图数据是否加载完
     }
   }
 
@@ -50,7 +51,8 @@ export default class Index extends React.Component {
     const res = await axios.get('http://localhost:8009/home/swiper')
     this.setState(() => {
       return {
-        swipers: res.data.body
+        swipers: res.data.body,
+        isSwiperLoaded: true
       }
     })
   }
@@ -96,13 +98,19 @@ export default class Index extends React.Component {
     return (
       <div className="index">
         {/* 轮播图 */}
-        <Carousel
-          autoplay={true}
-          autoplayInterval="2000"
-          infinite
-        >
-          {this.renderSwipers()}
-        </Carousel>
+        <div className="swiper">
+          {
+            this.state.isSwiperLoaded ? (
+              <Carousel
+                autoplay={true}
+                autoplayInterval="2000"
+                infinite
+              >
+                {this.renderSwipers()}
+              </Carousel>
+              ) : ''
+          }
+        </div>
         {/* 导航菜单 */}
         <Flex className="nav">
           {this.renderNavs()}
