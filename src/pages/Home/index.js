@@ -14,17 +14,17 @@ import './index.css'
 const tabItems = [
   {
     title: '首页',
-    icon: 'icon-index',
+    icon: 'icon-ind',
     path: '/home'
   },
   {
     title: '找房',
-    icon: 'icon-search',
+    icon: 'icon-findHouse',
     path: '/home/list'
   },
   {
     title: '资讯',
-    icon: 'icon-icon_fuben',
+    icon: 'icon-infom',
     path: '/home/news'
   },
   {

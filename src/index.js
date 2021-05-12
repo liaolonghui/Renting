@@ -8,7 +8,7 @@ import 'antd-mobile/dist/antd-mobile.css';
 // 全局样式
 import './index.css';
 // 导入字体图标
-import './assets/font/iconfont.css'
+import './assets/fonts/iconfont.css'
 
 
 ReactDOM.render(
