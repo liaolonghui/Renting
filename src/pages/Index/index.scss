@@ -1,7 +1,3 @@
-.index {
-  margin-bottom: 50px;
-}
-
 .swiper {
   height: 212px;
 }
@@ -70,6 +66,45 @@
     }
     .am-grid-item:first-child {
       margin-left: 10px;
+    }
+  }
+}
+
+
+// news
+.news {
+  h3.title {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 20px;
+    margin: 0;
+  }
+  .news-item {
+    height: 120px;
+    padding: 7px;
+    border-bottom: 2px solid #fafafa;
+    img {
+      width: 40%;
+      height: 100px;
+    }
+    .desc {
+      position: relative;
+      height: 80px;
+      padding-left: 10px;
+      h3 {
+        margin: 0;
+      }
+      span {
+        position: absolute;
+        bottom: 0;
+        color: #bbb;
+      }
+      span:first-child {
+        left: 0;
+      }
+      span:last-child {
+        right: 0;
+      }
     }
   }
 }

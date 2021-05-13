@@ -1,5 +1,5 @@
 import React from 'react'
-import { Carousel, Flex, Grid } from 'antd-mobile'
+import { Carousel, Flex, Grid, WingBlank } from 'antd-mobile'
 
 import axios from 'axios'
 
@@ -44,7 +44,17 @@ export default class Index extends React.Component {
       swipers: [], // 轮播图数据
       isSwiperLoaded: false, // 轮播图数据是否加载完
       groups: [], // 租房小组数据
+      news: [], // 资讯
     }
+  }
+
+  // 获取资讯数据
+  async getNews() {
+    const res = await axios.get('http://localhost:8009/home/news?area=AREA%7C88cff55c-aaa4-e2e0')
+    this.setState({
+      news: res.data.body
+    })
+    console.log(this.state.news)
   }
 
   // 获取租房小组数据
@@ -73,6 +83,7 @@ export default class Index extends React.Component {
   componentDidMount() {
     this.getSwipers()
     this.getGroups()
+    this.getNews()
   }
 
   // 渲染轮播图
@@ -105,6 +116,22 @@ export default class Index extends React.Component {
           </Flex.Item>
         )
       })
+    )
+  }
+
+  // 渲染资讯
+  renderNews() {
+    return (
+      this.state.news.map(item => (
+        <Flex className="news-item" key={item.id}>
+          <img src={`http://localhost:8009${item.imgSrc}`} alt={item.title}></img>
+          <div className="desc">
+            <h3>{item.title}</h3>
+            <span>{item.date}</span>
+            <span>{item.from}</span>
+          </div>
+        </Flex>
+      ))
     )
   }
 
@@ -141,7 +168,7 @@ export default class Index extends React.Component {
             hasLine={false}
             columnNum={2}
             renderItem={(item) => (
-              <Flex className="group-item" justify="aroud">
+              <Flex className="group-item" justify="aroud" key={item.id}>
                 <div className="desc">
                   <p className="title">{item.title}</p>
                   <span className="info">{item.desc}</span>
@@ -150,6 +177,11 @@ export default class Index extends React.Component {
               </Flex>
             )}
           />
+        </div>
+        {/* 新闻资讯 */}
+        <div className="news">
+          <h3 className="title">最新资讯</h3>
+          <WingBlank size="md">{this.renderNews()}</WingBlank>
         </div>
       </div>
     )
