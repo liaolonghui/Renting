@@ -1,3 +1,7 @@
+.index {
+  margin-bottom: 50px;
+}
+
 .swiper {
   height: 212px;
 }
@@ -15,5 +19,57 @@
     margin-top: 7px;
     font-size: 13px;
     font-weight: normal;
+  }
+}
+
+.group {
+  overflow: hidden;
+  background-color: #f1f1f1;
+  h3 {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 20px;
+    margin: 0;
+    .more {
+      float: right;
+      font-size: 13px;
+      color: #888;
+    }
+  }
+  .group-item {
+    height: 80px;
+    .desc {
+      .title {
+        margin: 5px;
+        font-weight: 600;
+      }
+      .info {
+        display: block;
+        color: #888;
+        margin: 5px;
+      }
+    }
+    img {
+      width: 60px;
+      height: 60px;
+      margin-left: 15px;
+    }
+  }
+  .am-grid .am-flexbox {
+    background-color: inherit;
+  }
+  .am-grid .am-flexbox .am-flexbox-item .am-grid-item-content {
+    padding: 5px;
+    padding-bottom: 10px;
+  }
+  .am-flexbox-align-stretch {
+    margin-bottom: 10px;
+    .am-grid-item {
+      margin-right: 10px;
+      background-color: #fff;
+    }
+    .am-grid-item:first-child {
+      margin-left: 10px;
+    }
   }
 }
