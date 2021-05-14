@@ -36,6 +36,11 @@ const navs = [
   },
 ]
 
+// H5获取地理定位
+// navigator.geolocation.getCurrentPosition(position => {
+//   console.log(position)
+// })
+
 export default class Index extends React.Component {
 
   constructor(props) {
@@ -45,6 +50,7 @@ export default class Index extends React.Component {
       isSwiperLoaded: false, // 轮播图数据是否加载完
       groups: [], // 租房小组数据
       news: [], // 资讯
+      cityName: '上海', // 当前城市名称(默认上海)
     }
   }
 
@@ -54,7 +60,6 @@ export default class Index extends React.Component {
     this.setState({
       news: res.data.body
     })
-    console.log(this.state.news)
   }
 
   // 获取租房小组数据
@@ -84,6 +89,23 @@ export default class Index extends React.Component {
     this.getSwipers()
     this.getGroups()
     this.getNews()
+    // IP定位
+    const that = this
+    window.AMap.plugin('AMap.CitySearch', function() {
+      const citysearch = new window.AMap.CitySearch()
+      citysearch.getLocalCity(async function(status, result) {
+        if (status === 'complete' && result.info === 'OK') {
+            if (result && result.city && result.bounds) {
+                const res = await axios.get(`http://localhost:8009/area/info?name=${result.city}`)
+                that.setState({
+                  cityName: res.data.body.label
+                })
+            }
+        } else {
+            console.log(result.info)
+        }
+      })
+    })
   }
 
   // 渲染轮播图
@@ -157,7 +179,7 @@ export default class Index extends React.Component {
             <Flex className="search">
               {/* 位置 */}
               <div className="location" onClick={() => this.props.history.push('/citylist')}>
-                <span className="name">上海</span>
+                <span className="name">{ this.state.cityName }</span>
                 <i className="iconfont icon-arrow"></i>
               </div>
               {/* 搜索表单 */}

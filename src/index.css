@@ -1,6 +1,7 @@
 html,
 body {
-  height: 100%;
+  margin: 0;
+  padding: 0;
   font-family: "Microsoft YaHei";
   color: #333;
   background-color: #fff;
@@ -13,4 +14,12 @@ body {
 
 h2 {
   margin: 0;
+}
+
+/* 为了让地图撑起来 */
+html,
+body,
+#root,
+.App {
+  height: 100%;
 }
