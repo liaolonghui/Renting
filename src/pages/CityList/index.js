@@ -1,6 +1,8 @@
 import React from 'react'
 import axios from 'axios'
+import { NavBar, Icon } from 'antd-mobile'
 import { getCurrentCity } from '../../utils/index'
+import './index.scss'
 
 // 格式化城市列表数据
 const formatCityList = (list) => {
@@ -40,15 +42,24 @@ export default class CityList extends React.Component {
     const hotRes = await axios.get('http://localhost:8009/area/hot')
     cityList['hot'] = hotRes.data.body
     cityIndex.unshift('hot')
-    console.log(cityList, cityIndex)
     // 获取当前定位城市
     const currentCity = await getCurrentCity()
-    console.log(currentCity)
+    cityList['#'] = [currentCity]
+    cityIndex.unshift('#')
+    console.log(cityList, cityIndex, currentCity)
   }
 
   render() {
     return (
-      <div>citylist</div>
+      <div className="citylist">
+        {/* navbar */}
+        <NavBar
+          className="navbar"
+          mode="light"
+          icon={ <i className="iconfont icon-back" /> }
+          onLeftClick={() => this.props.history.go(-1)}
+        >城市选择</NavBar>
+      </div>
     )
   }
 }
