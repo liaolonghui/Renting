@@ -1,5 +1,6 @@
 import React from 'react'
 import axios from 'axios'
+import { getCurrentCity } from '../../utils/index'
 
 // 格式化城市列表数据
 const formatCityList = (list) => {
@@ -40,6 +41,9 @@ export default class CityList extends React.Component {
     cityList['hot'] = hotRes.data.body
     cityIndex.unshift('hot')
     console.log(cityList, cityIndex)
+    // 获取当前定位城市
+    const currentCity = await getCurrentCity()
+    console.log(currentCity)
   }
 
   render() {

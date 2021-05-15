@@ -1,7 +1,8 @@
 import React from 'react'
 import { Carousel, Flex, Grid, WingBlank } from 'antd-mobile'
-
 import axios from 'axios'
+
+import { getCurrentCity } from '../../utils/index'
 
 import Nav1 from '../../assets/images/nav-1.png'
 import Nav2 from '../../assets/images/nav-2.png'
@@ -85,27 +86,20 @@ export default class Index extends React.Component {
     })
   }
 
+  // 定位
+  async getCity() {
+    const currentCity = await getCurrentCity()
+    this.setState({
+      cityName: currentCity.label
+    })
+  }
+ 
   componentDidMount() {
     this.getSwipers()
     this.getGroups()
     this.getNews()
     // IP定位
-    const that = this
-    window.AMap.plugin('AMap.CitySearch', function() {
-      const citysearch = new window.AMap.CitySearch()
-      citysearch.getLocalCity(async function(status, result) {
-        if (status === 'complete' && result.info === 'OK') {
-            if (result && result.city && result.bounds) {
-                const res = await axios.get(`http://localhost:8009/area/info?name=${result.city}`)
-                that.setState({
-                  cityName: res.data.body.label
-                })
-            }
-        } else {
-            console.log(result.info)
-        }
-      })
-    })
+    this.getCity()
   }
 
   // 渲染轮播图
