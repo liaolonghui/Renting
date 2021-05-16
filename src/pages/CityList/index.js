@@ -1,6 +1,6 @@
 import React, { createRef } from 'react'
 import axios from 'axios'
-import { NavBar } from 'antd-mobile'
+import { NavBar, Toast } from 'antd-mobile'
 import { List, AutoSizer } from 'react-virtualized'
 import { getCurrentCity } from '../../utils/index'
 import './index.scss'
@@ -46,6 +46,9 @@ const formatCityIndex = (index) => {
   }
 }
 
+// 有房源的城市
+const HOUSE_CITY = ['北京', '上海', '广州', '深圳']
+
 export default class CityList extends React.Component {
 
   constructor(props) {
@@ -88,6 +91,19 @@ export default class CityList extends React.Component {
     })
   }
 
+  // 选择城市（切换城市）
+  changeCity({ label, value }) {
+    // 判断是否有房源信息
+    if (HOUSE_CITY.indexOf(label) !== -1) {
+      // 有房源
+      localStorage.setItem('hkzf_city', JSON.stringify({ label, value }))
+      this.props.history.go(-1)
+    } else {
+      // 无房源
+      Toast.info('当前城市无房源', 1, null, false) // false用于取消遮罩层
+    }
+  }
+
   // 渲染列表每一行数据
   rowRenderer = ({
     key, // 唯一key
@@ -102,7 +118,11 @@ export default class CityList extends React.Component {
     return (
       <div key={key} style={style} className="city">
         <div className="title">{ formatCityIndex(letter) }</div>
-        {cityList[letter].map(city => <div className="name" key={city.value}>{city.label}</div>)}
+        {cityList[letter].map(city => (
+          <div className="name" key={city.value} onClick={() => this.changeCity(city)}>
+            {city.label}
+          </div>
+        ))}
       </div>
     );
   }
