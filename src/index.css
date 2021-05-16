@@ -16,6 +16,10 @@ h2 {
   margin: 0;
 }
 
+ul, ol, li {
+  list-style: none;
+}
+
 /* 为了让地图撑起来 */
 html,
 body,

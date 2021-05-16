@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { createRef } from 'react'
 import axios from 'axios'
 import { NavBar } from 'antd-mobile'
 import { List, AutoSizer } from 'react-virtualized'
@@ -9,6 +9,7 @@ import './index.scss'
 const indexHeight = 36
 // 城市
 const cityHeight = 47
+let flag = true
 
 // 格式化城市列表数据
 const formatCityList = (list) => {
@@ -47,13 +48,24 @@ const formatCityIndex = (index) => {
 
 export default class CityList extends React.Component {
 
-  state = {
-    cityList: {},
-    cityIndex: []
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      cityList: {},
+      cityIndex: [],
+      activeIndex: 0, // 指定右侧索引列表高亮的索引号
+    }
+
+    // Ref
+    this.cityListComponent = createRef()
   }
 
-  componentDidMount() {
-    this.getCityList()
+  async componentDidMount() {
+    await this.getCityList()
+    // 调用measureAllRows方法提前计算list中每一行高度
+    // 调用时要保证list组件中已经有数据了
+    this.cityListComponent.current.measureAllRows()
   }
 
   // 获取城市列表数据
@@ -102,6 +114,37 @@ export default class CityList extends React.Component {
     return rowHeight
   }
 
+  // 渲染右侧索引
+  renderCityIndex = () => {
+    // 获取到cityindex并遍历渲染
+    const { activeIndex, cityIndex } = this.state
+    return cityIndex.map((item, index) => (
+      <li className="city-index-item" key={item} onClick={() => {
+        // 点击索引跳转至对应位置
+        this.cityListComponent.current.scrollToRow(index)
+      }}>
+        <span className={ activeIndex === index ? 'index-active': '' }>
+          {item==='hot' ? '热' : item.toUpperCase()}
+        </span>
+      </li>
+    ))
+  }
+
+  // 滚动城市列表让对应索引高亮
+  onRowsRendered = ({startIndex}) => {
+    if (!flag) return
+    flag = false
+    setTimeout(() => {
+      if (startIndex !== this.state.activeIndex) {
+        this.setState({
+          activeIndex: startIndex
+        })
+      }
+      flag = true
+    },20)
+  }
+
+  
   render() {
     return (
       <div className="citylist">
@@ -116,14 +159,20 @@ export default class CityList extends React.Component {
         <AutoSizer>
           {({height, width}) => (
             <List
+              ref={this.cityListComponent}
+              scrollToAlignment="start"
               width={width}
               height={height}
               rowCount={this.state.cityIndex.length}
               rowHeight={this.rowHeight}
               rowRenderer={this.rowRenderer}
+              onRowsRendered={this.onRowsRendered}
             />
           )}
         </AutoSizer>
+        <ul className="city-index">
+          {this.renderCityIndex()}
+        </ul>
       </div>
     )
   }

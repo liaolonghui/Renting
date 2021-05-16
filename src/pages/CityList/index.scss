@@ -19,4 +19,27 @@
       border-bottom: 1px solid #eee;
     }
   }
+  .city-index {
+    position: absolute;
+    top: 50px;
+    right: 10px;
+    z-index: 99;
+    .city-index-item {
+      margin-top: 10px;
+    }
+    .city-index-item>span {
+      display: block;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background-color: #eee;
+      line-height: 17px;
+      text-align: center;
+      font-size: 12px;
+      &.index-active {
+        background-color: #21b97a;
+        color: #fff;
+      }
+    }
+  }
 }
