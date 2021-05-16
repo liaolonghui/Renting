@@ -5,6 +5,11 @@ import { List, AutoSizer } from 'react-virtualized'
 import { getCurrentCity } from '../../utils/index'
 import './index.scss'
 
+// 索引
+const indexHeight = 36
+// 城市
+const cityHeight = 47
+
 // 格式化城市列表数据
 const formatCityList = (list) => {
   const cityList = {}
@@ -28,44 +33,24 @@ const formatCityList = (list) => {
   }
 }
 
-// List data as an array of strings
-const list = [
-  'Brian Vaughn',
-  'Brian Vaughn',
-  'Brian Vaughn',
-  'Brian Vaughn',
-  'Brian Vaughn',
-  'Brian Vaughn',
-  'Brian Vaughn',
-  'Brian Vaughn',
-  'Brian Vaughn',
-  'Brian Vaughn',
-  'Brian Vaughn',
-  'Brian Vaughn',
-  'Brian Vaughn',
-  'Brian Vaughn',
-  'Brian Vaughn',
-  'Brian Vaughn',
-  'Brian Vaughn',
-  'Brian Vaughn',
-  // And so on...
-];
-// 渲染列表每一行数据
-function rowRenderer({
-  key, // 唯一key
-  index, // 索引
-  isScrolling, // 当前项是否滚动
-  isVisible, // 当前项是否可见
-  style, // 重点：一定要给每一行数据添加style，用于指定每一行位置
-}) {
-  return (
-    <div key={key} style={style}>
-      {list[index]}{index}{isScrolling+''}{isVisible+''}
-    </div>
-  );
+// 格式化城市索引
+const formatCityIndex = (index) => {
+  switch (index) {
+    case '#':
+      return '当前定位'
+    case 'hot':
+      return '热门城市'
+    default:
+      return index.toUpperCase()
+  }
 }
 
 export default class CityList extends React.Component {
+
+  state = {
+    cityList: {},
+    cityIndex: []
+  }
 
   componentDidMount() {
     this.getCityList()
@@ -84,7 +69,37 @@ export default class CityList extends React.Component {
     const currentCity = await getCurrentCity()
     cityList['#'] = [currentCity]
     cityIndex.unshift('#')
-    console.log(cityList, cityIndex, currentCity)
+    // 更新
+    this.setState({
+      cityList,
+      cityIndex
+    })
+  }
+
+  // 渲染列表每一行数据
+  rowRenderer = ({
+    key, // 唯一key
+    index, // 索引
+    isScrolling, // 当前项是否滚动
+    isVisible, // 当前项是否可见
+    style, // 重点：一定要给每一行数据添加style，用于指定每一行位置
+  }) => {
+    const { cityIndex, cityList } = this.state
+    const letter = cityIndex[index]
+
+    return (
+      <div key={key} style={style} className="city">
+        <div className="title">{ formatCityIndex(letter) }</div>
+        {cityList[letter].map(city => <div className="name" key={city.value}>{city.label}</div>)}
+      </div>
+    );
+  }
+  // 动态计算列表每一行高度
+  rowHeight = ({index}) => {
+    const { cityList, cityIndex } = this.state
+    const letter = cityIndex[index]
+    const rowHeight = (cityList[letter].length * cityHeight) + indexHeight
+    return rowHeight
   }
 
   render() {
@@ -103,9 +118,9 @@ export default class CityList extends React.Component {
             <List
               width={width}
               height={height}
-              rowCount={list.length}
-              rowHeight={50}
-              rowRenderer={rowRenderer}
+              rowCount={this.state.cityIndex.length}
+              rowHeight={this.rowHeight}
+              rowRenderer={this.rowRenderer}
             />
           )}
         </AutoSizer>
