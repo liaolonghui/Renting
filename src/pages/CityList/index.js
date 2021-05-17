@@ -1,6 +1,7 @@
 import React, { createRef } from 'react'
 import axios from 'axios'
-import { NavBar, Toast } from 'antd-mobile'
+import { Toast } from 'antd-mobile'
+import NavHeader from '../../components/NavHeader'
 import { List, AutoSizer } from 'react-virtualized'
 import { getCurrentCity } from '../../utils/index'
 import './index.scss'
@@ -169,12 +170,9 @@ export default class CityList extends React.Component {
     return (
       <div className="citylist">
         {/* navbar */}
-        <NavBar
-          className="navbar"
-          mode="light"
-          icon={ <i className="iconfont icon-back" /> }
-          onLeftClick={() => this.props.history.go(-1)}
-        >城市选择</NavBar>
+        <NavHeader>
+          城市选择
+        </NavHeader>
         {/* List */}
         <AutoSizer>
           {({height, width}) => (
