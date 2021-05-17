@@ -1,0 +1,17 @@
+.map {
+  height: 100%;
+  padding-top: 45px;
+}
+
+.container {
+  height: 100%;
+}
+
+.map :global(.am-navbar) {
+  margin-top: -45px;
+  background-color: #fff;
+}
+
+.map :global(.am-navbar .iconfont) {
+  color: skyblue;
+}
