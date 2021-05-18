@@ -1,4 +1,5 @@
 import React from 'react'
+import axios from 'axios'
 // 导入封装好的NavHeader
 import NavHeader from '../../components/NavHeader'
 // 样式
@@ -25,7 +26,7 @@ export default class Map extends React.Component {
       resizeEnable: true,
     });
     //获取用户当前定位城市
-    const currentCity = JSON.parse(localStorage.getItem('hkzf_city')).label
+    const {label, value} = JSON.parse(localStorage.getItem('hkzf_city'))
     
     AMap.plugin(['AMap.Geocoder', 'AMap.Marker', 'AMap.Scale', 'AMap.ToolBar', 'AMap.Pixel'], function() {
       const geocoder = new AMap.Geocoder({
@@ -33,7 +34,7 @@ export default class Map extends React.Component {
       })
       const marker = new AMap.Marker()
       // 根据定位城市获取对应坐标
-      geocoder.getLocation(currentCity, function(status, result) {
+      geocoder.getLocation(label, async function(status, result) {
         if (status === 'complete'&&result.geocodes.length) {
           const lnglat = result.geocodes[0].location
           marker.setPosition(lnglat);
@@ -43,18 +44,30 @@ export default class Map extends React.Component {
           map.addControl(new AMap.Scale())
 
           // map.add(marker); 添加覆盖物
-          // 覆盖物"121.473701", "31.230416"
-          var m1 = new AMap.Text({
-            position: ["121.473701", "31.230416"],
-            offset: new AMap.Pixel(0, 0),
-            text: `<div class="${styles.bubble}"><p class="${styles.name}">蛇皮区</p><p>21套</p></div>`
+          const res = await axios.get(`http://localhost:8009/area/map?id=${value}`)
+          res.data.body.forEach(item => {
+            // 为每一条数据创建覆盖物
+            const mk = new AMap.Text({
+              position: [item.coord.longitude, item.coord.latitude],
+              offset: new AMap.Pixel(0,0),
+              text: `<div class="${styles.bubble}"><p class="${styles.name}">${item.label}</p><p>${item.count}套</p></div>`
+            })
+            // 唯一标识
+            mk.id = item.value
+            mk.setStyle(labelStyle)
+            mk.on('click', () => {
+              console.log("我的id是"+mk.id)
+              // 放大地图，以当前点击的覆盖物为中心。并且清除覆盖物。
+              map.setFitView(mk)
+              map.setZoom(13)
+              // map.clearMap()清除所有覆盖物
+              map.clearMap()
+            })
+            map.add(mk)
           })
-          m1.setStyle(labelStyle)
-          m1.on('click', () => console.log(1))
-          map.add(m1)
 
           // 展示map
-          map.setFitView(marker);
+          map.setFitView(marker)
           map.setZoom(11)
         }else{
           console.error('根据地址查询位置失败');
