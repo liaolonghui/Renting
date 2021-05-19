@@ -8,8 +8,6 @@ import styles from './index.module.css'
 const AMap = window.AMap
 // 覆盖物样式
 const labelStyle = {
-  width: '70px',
-  height: '70px',
   backgroundColor: 'transparent',
   cursor: 'pointer',
   border: '0px solid rgb(255, 0, 0)',
@@ -92,11 +90,7 @@ export default class Map extends React.Component {
     const { nextZoom, type } = this.getTypeAndZoom()
     data.forEach(item => {
       // 绘制覆盖物
-      if (type === 'circle') {
-        // 绘制圆形覆盖物
-      } else if (type === 'rect') {
-        // 绘制矩形覆盖物
-      }
+      this.createOverLays(item, nextZoom, type)
     });
   }
 
@@ -118,6 +112,58 @@ export default class Map extends React.Component {
       type = 'rect'
     }
     return { nextZoom, type }
+  }
+
+  // 绘制覆盖物
+  createOverLays(data, zoom, type) {
+    if (type === 'circle') {
+      // 绘制圆形覆盖物（区，镇）
+      this.createCircle(data, zoom)
+    } else if (type === 'rect') {
+      // 绘制矩形覆盖物(小区) 注意：此时不再需要放大
+      this.createRect(data)
+    }
+  }
+
+  // 绘制Circle
+  createCircle(item, zoom) {
+      const mk = new AMap.Text({
+        position: [item.coord.longitude, item.coord.latitude],
+        offset: new AMap.Pixel(0,0),
+        text: `<div class="${styles.bubble}"><p class="${styles.name}">${item.label}</p><p>${item.count}套</p></div>`
+      })
+      // 唯一标识
+      mk.id = item.value
+      mk.setStyle(labelStyle)
+      mk.on('click', () => {
+        // 获取该区域下的房源数据
+        this.renderOverLays(mk.id)
+        // 放大地图，以当前点击的覆盖物为中心。并且清除覆盖物。
+        this.map.setFitView(mk)
+        this.map.setZoom(zoom) // 缩放
+        this.map.clearMap()
+      })
+      this.map.add(mk)
+  }
+
+  // 绘制Rect
+  createRect(item) {
+    const mk = new AMap.Text({
+      position: [item.coord.longitude, item.coord.latitude],
+      offset: new AMap.Pixel(-170, 140),
+      text: `<div class="${styles.rect}">
+                <span class="${styles.housename}">${item.label}</span>
+                <span class="${styles.housenum}">${item.count}套</span>
+                <i class="${styles.arrow}" />
+            </div>`
+    })
+    // 唯一标识
+    mk.id = item.value
+    mk.setStyle(labelStyle)
+    mk.on('click', () => {
+      console.log("小区的id是"+mk.id)
+    })
+    this.map.add(mk)
   }
 
   render() {
