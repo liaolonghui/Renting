@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
+import { Toast } from 'antd-mobile'
 // 导入封装好的NavHeader
 import NavHeader from '../../components/NavHeader'
 // 样式
@@ -99,14 +100,25 @@ export default class Map extends React.Component {
 
   // 根据id获取数据，调用绘制函数...
   async renderOverLays(id) {
-    const res = await axios.get(`http://localhost:8009/area/map?id=${id}`)
-    const data = res.data.body
+    // 为了代码健壮性，加个try catch
+    try {
+      // 发送请求前开启loading
+      Toast.loading('加载中...', 0, null, false)
+      const res = await axios.get(`http://localhost:8009/area/map?id=${id}`)
 
-    const { nextZoom, type } = this.getTypeAndZoom()
-    data.forEach(item => {
-      // 绘制覆盖物
-      this.createOverLays(item, nextZoom, type)
-    });
+      const data = res.data.body
+      const { nextZoom, type } = this.getTypeAndZoom()
+      data.forEach(item => {
+        // 绘制覆盖物
+        this.createOverLays(item, nextZoom, type)
+      });
+
+      // 获取到数据并且渲染完成后关闭loading
+      Toast.hide()
+    } catch(err) {
+      // 请求等出错了也要关闭loading
+      Toast.hide()
+    }
   }
 
   // 获取要绘制的覆盖物类型，以及下一级的放大等级
@@ -191,11 +203,19 @@ export default class Map extends React.Component {
 
   // 获取房源数据并展示
   async getHousesList(id) {
-    const res = await axios.get(`http://localhost:8009/houses?cityId=${id}`)
-    this.setState({
-      housesList: res.data.body.list,
-      isShowList: true
-    })
+    // 为了代码健壮性，加个try catch
+    try {
+      Toast.loading('加载中...', 0, null, false)
+      const res = await axios.get(`http://localhost:8009/houses?cityId=${id}`)
+      Toast.hide()
+      this.setState({
+        housesList: res.data.body.list,
+        isShowList: true
+      })
+    } catch (e) {
+      // 出错了也要关闭loading
+      Toast.hide()
+    }
   }
 
   // 封装渲染房屋列表的方法
