@@ -85,6 +85,15 @@ export default class Map extends React.Component {
           console.error('根据地址查询位置失败');
         }
       })
+
+      // 给map添加移动事件
+      map.on('movestart', () => {
+        if (that.state.isShowList) {
+          that.setState({
+            isShowList: false
+          })
+        }
+      })
     })
   }
 
@@ -166,9 +175,16 @@ export default class Map extends React.Component {
     // 唯一标识
     mk.id = item.value
     mk.setStyle(labelStyle)
-    mk.on('click', () => {
+    mk.on('click', (e) => {
       // 展示房源数据
       this.getHousesList(mk.id)
+      // panBy(x:Number,y:Number)
+      // x: 页面宽度/2 - 当前点的clientX
+      // y: (页面高度-330)/2 - 当前点的clientY
+      const pixel = e.pixel
+      const x = window.innerWidth/2 - pixel.x
+      const y = (window.innerHeight-330)/2 - pixel.y
+      this.map.panBy(x, y)
     })
     this.map.add(mk)
   }
