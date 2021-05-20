@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import axios from 'axios'
 // 导入封装好的NavHeader
 import NavHeader from '../../components/NavHeader'
@@ -19,6 +20,11 @@ const labelStyle = {
 }
 
 export default class Map extends React.Component {
+  state = {
+    housesList: [],
+    isShowList: false, // 是否展示房屋列表
+  }
+
   componentDidMount() {
     this.initMap()
   }
@@ -127,23 +133,23 @@ export default class Map extends React.Component {
 
   // 绘制Circle
   createCircle(item, zoom) {
-      const mk = new AMap.Text({
-        position: [item.coord.longitude, item.coord.latitude],
-        offset: new AMap.Pixel(0,0),
-        text: `<div class="${styles.bubble}"><p class="${styles.name}">${item.label}</p><p>${item.count}套</p></div>`
-      })
-      // 唯一标识
-      mk.id = item.value
-      mk.setStyle(labelStyle)
-      mk.on('click', () => {
-        // 获取该区域下的房源数据
-        this.renderOverLays(mk.id)
-        // 放大地图，以当前点击的覆盖物为中心。并且清除覆盖物。
-        this.map.setFitView(mk)
-        this.map.setZoom(zoom) // 缩放
-        this.map.clearMap()
-      })
-      this.map.add(mk)
+    const mk = new AMap.Text({
+      position: [item.coord.longitude, item.coord.latitude],
+      offset: new AMap.Pixel(0,0),
+      text: `<div class="${styles.bubble}"><p class="${styles.name}">${item.label}</p><p>${item.count}套</p></div>`
+    })
+    // 唯一标识
+    mk.id = item.value
+    mk.setStyle(labelStyle)
+    mk.on('click', () => {
+      // 获取该区域下的房源数据
+      this.renderOverLays(mk.id)
+      // 放大地图，以当前点击的覆盖物为中心。并且清除覆盖物。
+      this.map.setFitView(mk)
+      this.map.setZoom(zoom) // 缩放
+      this.map.clearMap()
+    })
+    this.map.add(mk)
   }
 
   // 绘制Rect
@@ -161,20 +167,67 @@ export default class Map extends React.Component {
     mk.id = item.value
     mk.setStyle(labelStyle)
     mk.on('click', () => {
-      console.log("小区的id是"+mk.id)
+      // 展示房源数据
+      this.getHousesList(mk.id)
     })
     this.map.add(mk)
+  }
+
+  // 获取房源数据并展示
+  async getHousesList(id) {
+    const res = await axios.get(`http://localhost:8009/houses?cityId=${id}`)
+    this.setState({
+      housesList: res.data.body.list,
+      isShowList: true
+    })
+  }
+
+  // 封装渲染房屋列表的方法
+  renderHousesList() {
+    return (
+      this.state.housesList.map(house => (
+        <div className={styles.house} key={house.houseCode}>
+          <div className={styles.imgWrap}>
+            <img className={styles.img} src={`http://localhost:8009${house.houseImg}`} alt=""></img>
+          </div>
+          <div className={styles.content}>
+            <h3 className={styles.title}>{house.title}</h3>
+            <div className={styles.desc}>{house.desc}</div>
+            <div>
+              {house.tags.map((tag, index) => (
+                <span key={tag} className={[styles.tag, styles[`tag${index%3+1}`] ].join(' ')}>{ tag }</span>
+              ))}
+            </div>
+            <div className={styles.price}>
+              <span className={styles.priceNum}>{house.price}</span> 元/月
+            </div>
+          </div>
+        </div>
+      ))
+    )
   }
 
   render() {
     return (
       <div className={styles.map}>
         {/* NavHeader */}
-        <NavHeader>
-          地图找房
-        </NavHeader>
+        <NavHeader>地图找房</NavHeader>
         {/* 地图容器 */}
         <div id="container" className={styles.container} />
+        {/* 房源列表 */}
+        {/* 添加styles.show展示房屋列表 */}
+        <div className={[styles.houseList, this.state.isShowList?styles.show:''].join(' ')}>
+          <div className={styles.titleWrap}>
+            <h1 className={styles.listTitle}>房屋列表</h1>
+            <Link className={styles.titleMore} to="/home/list">
+              更多房源
+            </Link>
+          </div>
+          <div className={styles.houseItems}>
+            {/* 房屋结构 */}
+            { this.renderHousesList() }
+          </div>
+        </div>
       </div>
     )
   }
