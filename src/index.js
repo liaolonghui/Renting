@@ -12,7 +12,7 @@ import './assets/fonts/iconfont.css'
 import './index.css'
 
 // App组件的导入放后面，防止前面这些样式覆盖组件中的样式
-import App from './App';
+import App from './App'
 
 ReactDOM.render(
   <App />,

@@ -1,4 +1,4 @@
-import axios from 'axios'
+import API from './api'
 
 // 封装获取当前定位城市的函数
 export const getCurrentCity = () => {
@@ -13,7 +13,7 @@ export const getCurrentCity = () => {
           if (status === 'complete' && result.info === 'OK') {
               if (result && result.city && result.bounds) {
                   try {
-                    const res = await axios.get(`http://localhost:8009/area/info?name=${result.city}`)
+                    const res = await API.get(`/area/info?name=${result.city}`)
                     // 获取到城市信息 res.data.body
                     localStorage.setItem('hkzf_city', JSON.stringify(res.data.body))
                     // 返回该城市数据

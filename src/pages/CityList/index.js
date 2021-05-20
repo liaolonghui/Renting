@@ -1,5 +1,5 @@
 import React, { createRef } from 'react'
-import axios from 'axios'
+import API from '../../utils/api'
 import { Toast } from 'antd-mobile'
 import NavHeader from '../../components/NavHeader'
 import { List, AutoSizer } from 'react-virtualized'
@@ -75,10 +75,10 @@ export default class CityList extends React.Component {
   // 获取城市列表数据
   async getCityList() {
     // 城市列表数据
-    const res = await axios.get('http://localhost:8009/area/city?level=1')
+    const res = await API.get('/area/city?level=1')
     const { cityList, cityIndex } = formatCityList(res.data.body)
     // 热门城市数据
-    const hotRes = await axios.get('http://localhost:8009/area/hot')
+    const hotRes = await API.get('/area/hot')
     cityList['hot'] = hotRes.data.body
     cityIndex.unshift('hot')
     // 获取当前定位城市

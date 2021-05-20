@@ -1,6 +1,6 @@
 import React from 'react'
 import { Carousel, Flex, Grid, WingBlank } from 'antd-mobile'
-import axios from 'axios'
+import API from '../../utils/api'
 
 import { getCurrentCity } from '../../utils/index'
 
@@ -8,6 +8,9 @@ import Nav1 from '../../assets/images/nav-1.png'
 import Nav2 from '../../assets/images/nav-2.png'
 import Nav3 from '../../assets/images/nav-3.png'
 import Nav4 from '../../assets/images/nav-4.png'
+
+// 导入BASE_URL
+import { BASE_URL } from '../../utils/url'
 
 // 导入样式
 import './index.scss'
@@ -57,7 +60,7 @@ export default class Index extends React.Component {
 
   // 获取资讯数据
   async getNews() {
-    const res = await axios.get('http://localhost:8009/home/news?area=AREA%7C88cff55c-aaa4-e2e0')
+    const res = await API.get('/home/news?area=AREA%7C88cff55c-aaa4-e2e0')
     this.setState({
       news: res.data.body
     })
@@ -65,7 +68,7 @@ export default class Index extends React.Component {
 
   // 获取租房小组数据
   async getGroups() {
-    const res = await axios.get('http://localhost:8009/home/groups', {
+    const res = await API.get('/home/groups', {
       params: {
         area: 'AREA%7C88cff55c-aaa4-e2e0'
       }
@@ -77,7 +80,7 @@ export default class Index extends React.Component {
 
   // 获取轮播图数据
   async getSwipers() {
-    const res = await axios.get('http://localhost:8009/home/swiper')
+    const res = await API.get('/home/swiper')
     this.setState(() => {
       return {
         swipers: res.data.body,
@@ -112,7 +115,7 @@ export default class Index extends React.Component {
           style={{ display: 'inline-block', width: '100%', height: '212px' }}
         >
           <img
-            src={`http://localhost:8009${item.imgSrc}`}
+            src={BASE_URL + item.imgSrc}
             alt=""
             style={{ width: '100%', verticalAlign: 'top' }}
           />
@@ -140,7 +143,7 @@ export default class Index extends React.Component {
     return (
       this.state.news.map(item => (
         <Flex className="news-item" key={item.id}>
-          <img src={`http://localhost:8009${item.imgSrc}`} alt={item.title}></img>
+          <img src={BASE_URL + item.imgSrc} alt={item.title}></img>
           <div className="desc">
             <h3>{item.title}</h3>
             <span>{item.date}</span>
@@ -207,7 +210,7 @@ export default class Index extends React.Component {
                   <p className="title">{item.title}</p>
                   <span className="info">{item.desc}</span>
                 </div>
-                <img src={`http://localhost:8009${item.imgSrc}`} alt={item.title}></img>
+                <img src={BASE_URL + item.imgSrc} alt={item.title}></img>
               </Flex>
             )}
           />

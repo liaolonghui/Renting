@@ -1,7 +1,9 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import axios from 'axios'
+import API from '../../utils/api'
 import { Toast } from 'antd-mobile'
+// 导入BASE_URL
+import { BASE_URL } from '../../utils/url'
 // 导入封装好的NavHeader
 import NavHeader from '../../components/NavHeader'
 // 样式
@@ -104,7 +106,7 @@ export default class Map extends React.Component {
     try {
       // 发送请求前开启loading
       Toast.loading('加载中...', 0, null, false)
-      const res = await axios.get(`http://localhost:8009/area/map?id=${id}`)
+      const res = await API.get(`/area/map?id=${id}`)
 
       const data = res.data.body
       const { nextZoom, type } = this.getTypeAndZoom()
@@ -206,7 +208,7 @@ export default class Map extends React.Component {
     // 为了代码健壮性，加个try catch
     try {
       Toast.loading('加载中...', 0, null, false)
-      const res = await axios.get(`http://localhost:8009/houses?cityId=${id}`)
+      const res = await API.get(`/houses?cityId=${id}`)
       Toast.hide()
       this.setState({
         housesList: res.data.body.list,
@@ -224,7 +226,7 @@ export default class Map extends React.Component {
       this.state.housesList.map(house => (
         <div className={styles.house} key={house.houseCode}>
           <div className={styles.imgWrap}>
-            <img className={styles.img} src={`http://localhost:8009${house.houseImg}`} alt=""></img>
+            <img className={styles.img} src={`${BASE_URL}${house.houseImg}`} alt=""></img>
           </div>
           <div className={styles.content}>
             <h3 className={styles.title}>{house.title}</h3>
