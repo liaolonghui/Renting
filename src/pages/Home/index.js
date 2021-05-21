@@ -1,13 +1,15 @@
 import React from 'react'
 import { Route } from 'react-router-dom'
+// tabbar
+import { TabBar } from 'antd-mobile'
+// 导入组件样式 （放前面，防止覆盖下面组件自身的样式）
+import './index.css'
+
+// 各组件
 import Index from '../Index'
 import HouseList from '../HouseList'
 import News from '../News'
 import Profile from '../Profile'
-// tabbar
-import { TabBar } from 'antd-mobile'
-// 导入组件样式
-import './index.css'
 
 
 // TabBar的数据
