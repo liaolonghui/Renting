@@ -45,16 +45,38 @@ export default class Filter extends Component {
     })
   }
 
-  // 点击title高亮
+  // 点击title   高亮
   onTitleClick = (type) => {
-    this.setState((preState) => {
-      return {
-        titleSelectedStatus: {
-          ...preState.titleSelectedStatus,
-          [type]: true
-        },
-        openType: type
+    const { titleSelectedStatus, selectedValues } = this.state
+    // 创建新的标题选中对象
+    const newTitleSelectedStatus = {...titleSelectedStatus}
+    // 遍历标题选中对象
+    Object.keys(titleSelectedStatus).forEach(key => {
+      if (key === type) {
+        // 当前点击标题
+        newTitleSelectedStatus[type] = true
+        return
       }
+      
+      // 非当前点击标题则判断
+      const selectedVal = selectedValues[key] // 当前title对应的选中项值
+      if (key === 'area' && (selectedVal.length !== 2 || selectedVal[0] !== 'area')) {
+        // area高亮
+        newTitleSelectedStatus[key] = true
+      } else if ((key === 'mode' || key === 'price') && selectedVal[0] !== 'null') {
+        // mode或者price高亮
+        newTitleSelectedStatus[key] = true
+      } else if (key === 'more') {
+        // 更多
+      } else {
+        // 不高亮
+        newTitleSelectedStatus[key] = false
+      }
+    })
+
+    this.setState({
+      titleSelectedStatus: newTitleSelectedStatus,
+      openType: type
     })
   }
 
