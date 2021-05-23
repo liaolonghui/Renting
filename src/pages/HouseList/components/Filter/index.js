@@ -8,11 +8,27 @@ import API from '../../../../utils/api'
 
 import styles from './index.module.css'
 
+// 要高亮的title
+const titleSelectedStatus = {
+  area:false,
+  mode:false,
+  price:false,
+  more:false
+}
+// 每一个筛选项选中的值
+const selectedValues = {
+  area: ['area', 'null'],
+  mode: ['null'],
+  price: ['null'],
+  more: []
+}
+
 export default class Filter extends Component {
   state = {
-    titleSelectedStatus: {area:false, mode:false, price:false, more:false},
+    titleSelectedStatus,
     openType: '', // 控制FilterPicker或FilterMore的展示
     filtersData: {}, // 所有筛选数据
+    selectedValues, // 保存每一个筛选条件的选中
   }
 
   componentDidMount() {
@@ -49,21 +65,30 @@ export default class Filter extends Component {
     })
   }
   // 确定（隐藏对话框，并且保存选中的筛选项）
-  onSave = () => {
-    this.setState({
-      openType: ''
+  onSave = (value, type) => {
+    this.setState((preState) => {
+      return {
+        // 隐藏对话框
+        openType: '',
+        // 修改选中的筛选项
+        selectedValues: {
+          ...preState.selectedValues,
+          [type]: value // 只更新当前type
+        }
+      }
     })
   }
 
   // 渲染FilterPicker组件
   renderFilterPicker() {
-    const {openType, filtersData: {area, subway, rentType, price}} = this.state
+    const {openType, filtersData: {area, subway, rentType, price}, selectedValues} = this.state
     if (openType !== 'area' && openType !== 'mode' && openType !== 'price') {
       return null
     }
     // 根据openType获取当前筛选条件数据
     let data = []
     let cols = 1
+    let defaultValue = selectedValues[openType]
     switch (openType) {
       case 'area':
         // 区域数据（area和subway）
@@ -83,7 +108,17 @@ export default class Filter extends Component {
       default:
         break;
     }
-    return <FilterPicker onCancel={this.onCancel} onSave={this.onSave} data={data} cols={cols} />
+    return (
+      <FilterPicker
+        key={openType}
+        onCancel={this.onCancel}
+        onSave={this.onSave}
+        data={data}
+        cols={cols}
+        type={openType}
+        defaultValue={defaultValue}
+      />
+    )
   }
 
   render() {
