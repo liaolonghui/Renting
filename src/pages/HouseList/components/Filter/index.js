@@ -57,7 +57,7 @@ export default class Filter extends Component {
         newTitleSelectedStatus[type] = true
         return
       }
-      
+
       // 非当前点击标题则判断
       const selectedVal = selectedValues[key] // 当前title对应的选中项值
       if (key === 'area' && (selectedVal.length !== 2 || selectedVal[0] !== 'area')) {
@@ -143,6 +143,19 @@ export default class Filter extends Component {
     )
   }
 
+  // 渲染FilterMore组件
+  renderFilterMore() {
+    const { openType, filtersData: {roomType, oriented, floor, characteristic}, selectedValues } = this.state
+    if (openType !== 'more') {
+      return null
+    }
+    const data = {roomType, oriented, floor, characteristic}
+    const defaultValue = selectedValues[openType]
+    return (
+      <FilterMore data={data} type={openType} onSave={this.onSave} defaultValue={defaultValue} onCancel={this.onCancel} />
+    )
+  }
+
   render() {
     const { titleSelectedStatus, openType } = this.state
 
@@ -163,7 +176,7 @@ export default class Filter extends Component {
           { this.renderFilterPicker() }
 
           {/* 最后一个菜单对应的内容 */}
-          {/* <FilterMore /> */}
+          { this.renderFilterMore() }
         </div>
       </div>
     )

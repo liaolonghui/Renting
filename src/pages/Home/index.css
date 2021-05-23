@@ -7,6 +7,7 @@ i.iconfont {
 }
 
 .home .am-tab-bar-bar {
+  z-index: 0;
   position: fixed;
   bottom: 0;
 }
