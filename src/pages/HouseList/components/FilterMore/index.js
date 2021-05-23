@@ -63,12 +63,12 @@ export default class FilterMore extends Component {
   render() {
     const {roomType, oriented, floor, characteristic} = this.props.data
     // 这个是父组件传过来用于关闭对话框的onCancel
-    const { onCancel } = this.props
+    const { onCancel, type } = this.props
 
     return (
       <div className={styles.root}>
         {/* 遮罩层 */}
-        <div className={styles.mask} onClick={onCancel} />
+        <div className={styles.mask} onClick={() => onCancel(type)} />
 
         {/* 条件内容 */}
         <div className={styles.tags}>

@@ -32,7 +32,7 @@ export default class FilterPicker extends Component {
 
         {/* 底部按钮 */}
         {/* ok时把value，type传过去 */}
-        <FilterFooter onCancel={() => onCancel()} onOk={() => onSave(value, type)} />
+        <FilterFooter onCancel={() => onCancel(type)} onOk={() => onSave(value, type)} />
       </>
     )
   }

@@ -66,8 +66,9 @@ export default class Filter extends Component {
       } else if ((key === 'mode' || key === 'price') && selectedVal[0] !== 'null') {
         // mode或者price高亮
         newTitleSelectedStatus[key] = true
-      } else if (key === 'more') {
+      } else if (key === 'more' && selectedVal.length !== 0) {
         // 更多
+        newTitleSelectedStatus[key] = true
       } else {
         // 不高亮
         newTitleSelectedStatus[key] = false
@@ -80,14 +81,52 @@ export default class Filter extends Component {
     })
   }
 
+  // 注意：在点击取消或者确定时，需要根据type和value判断当前这一项是否需要高亮。
   // 取消（隐藏对话框）
-  onCancel = () => {
+  onCancel = (type) => {
+    // 先进行菜单高亮的逻辑处理
+    const { titleSelectedStatus, selectedValues } = this.state
+    const newTitleSelectedStatus = {...titleSelectedStatus}
+    const selectedVal = selectedValues[type] // 当前title对应的选中项值
+    if (type === 'area' && (selectedVal.length !== 2 || selectedVal[0] !== 'area')) {
+      // area高亮
+      newTitleSelectedStatus[type] = true
+    } else if ((type === 'mode' || type === 'price') && selectedVal[0] !== 'null') {
+      // mode或者price高亮
+      newTitleSelectedStatus[type] = true
+    } else if (type === 'more' && selectedVal.length !== 0) {
+      // 更多
+      newTitleSelectedStatus[type] = true
+    } else {
+      // 不高亮
+      newTitleSelectedStatus[type] = false
+    }
+
     this.setState({
-      openType: ''
+      openType: '',
+      titleSelectedStatus: newTitleSelectedStatus
     })
   }
   // 确定（隐藏对话框，并且保存选中的筛选项）
   onSave = (value, type) => {
+    // 先进行菜单高亮的逻辑处理
+    const { titleSelectedStatus } = this.state
+    const newTitleSelectedStatus = {...titleSelectedStatus}
+    const selectedVal = value // 当前title对应的选中项值
+    if (type === 'area' && (selectedVal.length !== 2 || selectedVal[0] !== 'area')) {
+      // area高亮
+      newTitleSelectedStatus[type] = true
+    } else if ((type === 'mode' || type === 'price') && selectedVal[0] !== 'null') {
+      // mode或者price高亮
+      newTitleSelectedStatus[type] = true
+    } else if (type === 'more' && selectedVal.length !== 0) {
+      // 更多
+      newTitleSelectedStatus[type] = true
+    } else {
+      // 不高亮
+      newTitleSelectedStatus[type] = false
+    }
+
     this.setState((preState) => {
       return {
         // 隐藏对话框
@@ -96,7 +135,9 @@ export default class Filter extends Component {
         selectedValues: {
           ...preState.selectedValues,
           [type]: value // 只更新当前type
-        }
+        },
+        // 更新title是否高亮的数据
+        titleSelectedStatus: newTitleSelectedStatus
       }
     })
   }
@@ -164,7 +205,7 @@ export default class Filter extends Component {
         {/* 前三个菜单的遮罩层 */}
         {
           (openType === 'area' || openType === 'mode' || openType === 'price')
-          ? <div className={styles.mask} onClick={() => this.onCancel()}></div>
+          ? <div className={styles.mask} onClick={() => this.onCancel(openType)}></div>
           : null
         }
 
