@@ -6,6 +6,8 @@ import { Toast } from 'antd-mobile'
 import { BASE_URL } from '../../utils/url'
 // 导入封装好的NavHeader
 import NavHeader from '../../components/NavHeader'
+// HouseItem
+import HouseItem from '../../components/HouseItem'
 // 样式
 import styles from './index.module.css'
 
@@ -224,23 +226,14 @@ export default class Map extends React.Component {
   renderHousesList() {
     return (
       this.state.housesList.map(house => (
-        <div className={styles.house} key={house.houseCode}>
-          <div className={styles.imgWrap}>
-            <img className={styles.img} src={`${BASE_URL}${house.houseImg}`} alt=""></img>
-          </div>
-          <div className={styles.content}>
-            <h3 className={styles.title}>{house.title}</h3>
-            <div className={styles.desc}>{house.desc}</div>
-            <div>
-              {house.tags.map((tag, index) => (
-                <span key={tag} className={[styles.tag, styles[`tag${index%3+1}`] ].join(' ')}>{ tag }</span>
-              ))}
-            </div>
-            <div className={styles.price}>
-              <span className={styles.priceNum}>{house.price}</span> 元/月
-            </div>
-          </div>
-        </div>
+        <HouseItem 
+          key={house.houseCode}
+          src={BASE_URL + house.houseImg}
+          title={house.title}
+          desc={house.desc}
+          tags={house.tags}
+          price={house.price}
+        ></HouseItem>
       ))
     )
   }

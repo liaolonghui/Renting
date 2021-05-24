@@ -139,6 +139,27 @@ export default class Filter extends Component {
         // 更新title是否高亮的数据
         titleSelectedStatus: newTitleSelectedStatus
       }
+    }, () => {
+      // 获取到最新的selectedValues。。。
+      const newSelectedValues = this.state.selectedValues
+      const { area, mode, price, more } = newSelectedValues
+      // 筛选条件数据
+      const filters = []
+      // 区域
+      const areaStr = area[0]
+      let areaValue = 'null'
+      if (area.length === 3) {
+        // area长度为3时才需要拿选中值
+        areaValue = area[2] !== 'null' ? area[2] : area[1]
+      }
+      filters[areaStr] = areaValue
+      // 方式  租金
+      filters.mode = mode[0]
+      filters.price = price[0]
+      // 更多
+      filters.more = more.join(',')
+      // 传递给父组件
+      this.props.onFilter(filters)
     })
   }
 
