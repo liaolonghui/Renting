@@ -1,6 +1,6 @@
 import React from 'react'
 import { Flex } from 'antd-mobile'
-import { List } from 'react-virtualized'
+import { List, WindowScroller, AutoSizer } from 'react-virtualized'
 import SearchHeader from '../../components/SearchHeader'
 // HouseItem
 import HouseItem from '../../components/HouseItem'
@@ -82,13 +82,24 @@ export default class HouseList extends React.Component {
 
         {/* 房屋列表 */}
         <div className={styles.houseItems}>
-          <List
-            width={300}
-            height={300}
-            rowCount={this.state.count} // 条数
-            rowHeight={120} // 每行高度
-            rowRenderer={this.renderHouseList}
-          />
+          <WindowScroller>
+            {({ height, isScrolling, scrollTop }) => (
+              <AutoSizer>
+                {({ width }) => (
+                  <List
+                    width={width}
+                    height={height}
+                    autoHeight // 设置高度为 WindowScroller 最终渲染的列表高度
+                    isScrolling={isScrolling}
+                    scrollTop={scrollTop}
+                    rowCount={this.state.count} // 条数
+                    rowHeight={120} // 每行高度
+                    rowRenderer={this.renderHouseList}
+                  />
+                )}
+              </AutoSizer>
+            )}
+          </WindowScroller>
         </div>
       </div>
     )
