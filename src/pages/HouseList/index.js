@@ -5,6 +5,8 @@ import SearchHeader from '../../components/SearchHeader'
 // HouseItem
 import HouseItem from '../../components/HouseItem'
 import Filter from './components/Filter'
+// Sticky
+import Sticky from '../../components/Sticky'
 
 import styles from './index.module.css'
 import API from '../../utils/api'
@@ -115,7 +117,9 @@ export default class HouseList extends React.Component {
         </Flex>
 
         {/* 条件筛选栏 */}
-        <Filter onFilter={this.onFilter}></Filter>
+        <Sticky>
+          <Filter onFilter={this.onFilter}></Filter>
+        </Sticky>
 
         {/* 房屋列表 */}
         <div className={styles.houseItems}>
