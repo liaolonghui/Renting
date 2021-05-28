@@ -32,6 +32,9 @@ export default class Filter extends Component {
   }
 
   componentDidMount() {
+    // 获取到body用于防止点击筛选栏后依旧能滚动的bug
+    this.htmlBody = document.body
+
     this.getFilterData()
   }
 
@@ -47,6 +50,7 @@ export default class Filter extends Component {
 
   // 点击title   高亮
   onTitleClick = (type) => {
+    this.htmlBody.classList.add('body-fixed') // 用于防止点击筛选栏后依旧可以滚动
     const { titleSelectedStatus, selectedValues } = this.state
     // 创建新的标题选中对象
     const newTitleSelectedStatus = {...titleSelectedStatus}
@@ -84,6 +88,7 @@ export default class Filter extends Component {
   // 注意：在点击取消或者确定时，需要根据type和value判断当前这一项是否需要高亮。
   // 取消（隐藏对话框）
   onCancel = (type) => {
+    this.htmlBody.classList.remove('body-fixed')
     // 先进行菜单高亮的逻辑处理
     const { titleSelectedStatus, selectedValues } = this.state
     const newTitleSelectedStatus = {...titleSelectedStatus}
@@ -109,6 +114,7 @@ export default class Filter extends Component {
   }
   // 确定（隐藏对话框，并且保存选中的筛选项）
   onSave = (value, type) => {
+    this.htmlBody.classList.remove('body-fixed')
     // 先进行菜单高亮的逻辑处理
     const { titleSelectedStatus } = this.state
     const newTitleSelectedStatus = {...titleSelectedStatus}

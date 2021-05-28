@@ -37,3 +37,9 @@ body,
 .App {
   height: 100%;
 }
+
+
+/* 用于解决列表找房页面在点击筛选栏后依旧可以滚动的bug */
+.body-fixed {
+  overflow: hidden;
+}
