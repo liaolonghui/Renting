@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Spring, animated } from 'react-spring'
 
 import FilterTitle from '../FilterTitle'
 import FilterPicker from '../FilterPicker'
@@ -232,7 +233,9 @@ export default class Filter extends Component {
         {/* 前三个菜单的遮罩层 */}
         {
           (openType === 'area' || openType === 'mode' || openType === 'price')
-          ? <div className={styles.mask} onClick={() => this.onCancel(openType)}></div>
+          ? (<Spring from={{opacity: 0}} to={{opacity: 1}}>{ props => (
+            <animated.div style={props} className={styles.mask} onClick={() => this.onCancel(openType)}></animated.div>
+          )}</Spring>)
           : null
         }
 
