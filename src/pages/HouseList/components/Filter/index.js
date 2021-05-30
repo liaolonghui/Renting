@@ -225,19 +225,29 @@ export default class Filter extends Component {
     )
   }
 
+  // 渲染遮罩层
+  renderMask() {
+    const { openType } = this.state
+    if (openType === 'more' || openType === '') return null
+
+    return (
+      <Spring from={{opacity: 0}} to={{opacity: 1}}>
+        { 
+          props => {
+            return <animated.div ref={e => this.mask=e} style={props} className={styles.mask} onClick={() => this.onCancel(openType)}></animated.div>
+          }
+        }
+      </Spring>
+    )
+  }
+
   render() {
-    const { titleSelectedStatus, openType } = this.state
+    const { titleSelectedStatus } = this.state
 
     return (
       <div className={styles.root}>
         {/* 前三个菜单的遮罩层 */}
-        {
-          (openType === 'area' || openType === 'mode' || openType === 'price')
-          ? (<Spring from={{opacity: 0}} to={{opacity: 1}}>{ props => (
-            <animated.div style={props} className={styles.mask} onClick={() => this.onCancel(openType)}></animated.div>
-          )}</Spring>)
-          : null
-        }
+        { this.renderMask() }
 
         <div className={styles.content}>
           {/* 标题栏 */}
