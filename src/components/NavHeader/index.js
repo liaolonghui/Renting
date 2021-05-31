@@ -4,16 +4,17 @@ import { NavBar } from 'antd-mobile'
 // import './index.scss'
 import styles from './index.module.css'
 
-function NavHeader({children, history, onLeftClick}) {
+function NavHeader({children, history, onLeftClick, className, rightContent}) {
   // onLeftClick默认返回上一页
   const defaultHandler = () => history.go(-1)
 
   return (
     <NavBar
-      className={styles.navBar}
+      className={[ styles.navBar, className || '' ].join(' ')}
       mode="light"
       icon={ <i className="iconfont icon-back" /> }
       onLeftClick={ onLeftClick || defaultHandler }
+      rightContent={rightContent}
     >
       { children }
     </NavBar>
