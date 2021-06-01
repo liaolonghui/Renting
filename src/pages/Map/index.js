@@ -226,8 +226,9 @@ export default class Map extends React.Component {
   renderHousesList() {
     return (
       this.state.housesList.map(house => (
-        <HouseItem 
+        <HouseItem
           key={house.houseCode}
+          onClick={() => this.props.history.push(`/detail/${house.houseCode}`)}
           src={BASE_URL + house.houseImg}
           title={house.title}
           desc={house.desc}
