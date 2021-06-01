@@ -17,7 +17,7 @@ const isLogin = () => true // 先放在这
 const recommendHouses = [
   {
     id: 1,
-    houseImg: '/img/message/1.png',
+    src: BASE_URL+'/img/message/1.png',
     desc: '72.32㎡/南 北/低楼层',
     title: '安贞西里 3室1厅',
     price: 4500,
@@ -25,7 +25,7 @@ const recommendHouses = [
   },
   {
     id: 2,
-    houseImg: '/img/message/2.png',
+    src: BASE_URL+'/img/message/2.png',
     desc: '83㎡/南/高楼层',
     title: '天居园 2室1厅',
     price: 7200,
@@ -33,7 +33,7 @@ const recommendHouses = [
   },
   {
     id: 3,
-    houseImg: '/img/message/3.png',
+    src: BASE_URL+'/img/message/3.png',
     desc: '52㎡/西南/低楼层',
     title: '角门甲4号院 1室1厅',
     price: 4300,
@@ -42,7 +42,7 @@ const recommendHouses = [
 ]
 
 // 百度地图
-const BMap = window.BMap
+const AMap = window.AMap
 // 覆盖物的样式
 const labelStyle = {
   position: 'absolute',
@@ -100,58 +100,58 @@ export default class HouseDetail extends Component {
 
   // ------------------操作数据----------------
   // 1.进入页面,判断是否收藏了
-  async checkFavorite() {
-    // 1.1 先判断有没有登录,未登录直接return,登录了发送请求,判断是否收藏过
-    if (!isLogin()) return
-    const { id } = this.props.match.params
-    const res = await API.get(`/user/favorites/${id}`)
-    this.setState({
-      isFavorite: res.data.body.isFavorite
-    })
-  }
+  // async checkFavorite() {
+  //   // 1.1 先判断有没有登录,未登录直接return,登录了发送请求,判断是否收藏过
+  //   if (!isLogin()) return
+  //   const { id } = this.props.match.params
+  //   const res = await API.get(`/user/favorites/${id}`)
+  //   this.setState({
+  //     isFavorite: res.data.body.isFavorite
+  //   })
+  // }
   // 2.点击处理收藏
   // 点击的时候,判断有没有登录,如果没有登录去登录,登录的话,判断是否收藏了
-  handleFavorite = async () => {
-    if (!isLogin()) {
-      // 没有登录,弹出确定框
-      alert('提示', '你尚未登录,请先去登录', [
-        { text: '取消' },
-        {
-          text: '去登录', onPress: () => {
-            this.props.history.push('/login')
-          }
-        }
-      ])
-    } else {
-      // 如果登录的话,判断是否收藏了
-      if(!this.state.isFavorite) {
-        // 未收藏,发送请求,添加收藏
-        const {id} = this.props.match.params
-        const res = await API.post(`/user/favorites/${id}`)
-        if (res.data.status === 200) {
-          this.setState({
-            isFavorite: true
-          })
-          Toast.success('收藏成功', 1.5)
-        }
-      } else {
-        // 收藏了,发送请求,删除收藏
-        const { id } = this.props.match.params
-        const res = await API.delete(`/user/favorites/${id}`) 
-        if(res.data.status === 200) {
-          this.setState({
-            isFavorite: false
-          })
-          Toast.success('删除收藏成功', 1.5)
-        }
-      }
-    }
-  }
+  // handleFavorite = async () => {
+  //   if (!isLogin()) {
+  //     // 没有登录,弹出确定框
+  //     alert('提示', '你尚未登录,请先去登录', [
+  //       { text: '取消' },
+  //       {
+  //         text: '去登录', onPress: () => {
+  //           this.props.history.push('/login')
+  //         }
+  //       }
+  //     ])
+  //   } else {
+  //     // 如果登录的话,判断是否收藏了
+  //     if(!this.state.isFavorite) {
+  //       // 未收藏,发送请求,添加收藏
+  //       const {id} = this.props.match.params
+  //       const res = await API.post(`/user/favorites/${id}`)
+  //       if (res.data.status === 200) {
+  //         this.setState({
+  //           isFavorite: true
+  //         })
+  //         Toast.success('收藏成功', 1.5)
+  //       }
+  //     } else {
+  //       // 收藏了,发送请求,删除收藏
+  //       const { id } = this.props.match.params
+  //       const res = await API.delete(`/user/favorites/${id}`) 
+  //       if(res.data.status === 200) {
+  //         this.setState({
+  //           isFavorite: false
+  //         })
+  //         Toast.success('删除收藏成功', 1.5)
+  //       }
+  //     }
+  //   }
+  // }
 
   // -------------------钩子函数-----------------------
   render() {
     const { isLoaded, isFavorite } = this.state
-    const { title, tags, price, description, roomType, oriented, floor, community, coord, supporting, size } = this.state.houseInfo
+    const { title, tags, price, description, roomType, oriented, floor, community, supporting, size } = this.state.houseInfo
     return (
       <div className={styles.root}>
         {/* 导航栏 */}
@@ -181,7 +181,7 @@ export default class HouseDetail extends Component {
           <Flex className={styles.tags}>
             {tags.map((v, i) => {
               let tagCls = i < 2 ? `tag${i + 1}` : `tag3`
-              return <Flex.Item key={i}>
+              return <Flex.Item key={i} style={{flex: '0 0 auto'}}>
                 <span className={[styles.tag, styles[tagCls]].join(' ')}>
                   {v}
                 </span>
@@ -220,7 +220,7 @@ export default class HouseDetail extends Component {
             </Flex.Item>
             <Flex.Item>
               <div>
-                <span className={styles.title}>朝向：</span>{oriented[0]}
+                <span className={styles.title}>朝向：</span>{oriented.join('、')}
               </div>
               <div>
                 <span className={styles.title}>类型：</span>普通住宅
@@ -315,8 +315,8 @@ export default class HouseDetail extends Component {
       houseInfo: res.data.body,
       isLoaded: true
     })
-    // 一进入页面,检查是否收藏了
-    this.checkFavorite()
+    // // 一进入页面,检查是否收藏了
+    // this.checkFavorite()
   }
 
   // ----------------------渲染元素----------------------
@@ -349,21 +349,25 @@ export default class HouseDetail extends Component {
   renderMap(community, coord) {
     const { latitude, longitude } = coord
 
-    const map = new BMap.Map('map')
-    const point = new BMap.Point(longitude, latitude)
-    map.centerAndZoom(point, 17)
-    // 创建覆盖物
-    const label = new BMap.Label('', {
-      position: point,
-      offset: new BMap.Size(0, -36)
+    const map = new AMap.Map("map", {
+      resizeEnable: true,
+    });
+    this.map = map
+    AMap.plugin(['AMap.Marker', 'AMap.Pixel'], function() {
+      // 标记（覆盖物）
+      const mk = new AMap.Text({
+        position: [longitude, latitude],
+        offset: new AMap.Pixel(0, -36),
+        text: `
+          <span>${community}</span>
+          <div class="${styles.mapArrow}"></div>
+        `
+      })
+      mk.setStyle(labelStyle) // 覆盖物样式
+      // map
+      map.setFitView(mk) // 中心点
+      map.setZoom(17)
+      map.add(mk)
     })
-    // 给覆盖物设置样式
-    label.setStyle(labelStyle)
-    // 设置文本标注内容
-    label.setContent(`
-      <span>${community}</span>
-      <div class="${styles.mapArrow}"></div>
-    `)
-    map.addOverlay(label) // 添加覆盖物
   }
 }

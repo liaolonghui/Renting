@@ -29,7 +29,7 @@
   height: 45px;
   width: 100%;
   color: rgb(255, 255, 255);
-  background-color: pink;
+  background-color: transparent;
 }
 
 /* 房屋基础信息 */
@@ -217,6 +217,7 @@
 
 .fixedBottom {
   position: fixed;
+  z-index: 200;
   bottom: 0;
   left: 0;
   width: 100%;
