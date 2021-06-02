@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { Flex, WingBlank, WhiteSpace, Toast } from 'antd-mobile'
-
 import { Link } from 'react-router-dom'
+import { Flex, WingBlank, WhiteSpace, Toast } from 'antd-mobile'
+import { withFormik } from 'formik'
 
 import NavHeader from '../../components/NavHeader'
 
@@ -14,35 +14,10 @@ import API from '../../utils/api'
 // const REG_PWD = /^[a-zA-Z_\d]{5,12}$/
 
 class Login extends Component {
-  state = {
-    username: '',
-    password: ''
-  }
-  // ------------------ 操作数据
-  handleChange = (e) => {
-    this.setState({
-      [e.target.name]: e.target.value
-    })
-  }
-  // 点击登录按钮,发送登录请求
-  // submit事件默认是get请求,需要阻止默认行为
-  handleSubmit = async e => {
-    e.preventDefault()
-    const { username, password } = this.state
-    const { data: {status, body, description} } = await API.post('/user/login', {username, password})
-    console.log(status, body, description)
-    if (status === 200) {
-      Toast.info(description, 2, null, false)
-      localStorage.setItem('hkzf_token', body.token)
-      this.props.history.go(-1)
-    } else {
-      Toast.info(description, 2, null, false)
-    }
-  }
-
-  // ------------------ 钩子
   render() {
-    const { username, password } = this.state
+    // 通过props获取高阶组件传递过来的属性
+    const { values, handleChange, handleSubmit } = this.props
+
     return (
       <div className={styles.root}>
         {/* 顶部导航 */}
@@ -52,14 +27,14 @@ class Login extends Component {
         
         {/* 登录表单 */}
         <WingBlank>
-          <form onSubmit={this.handleSubmit}>
+          <form onSubmit={handleSubmit}>
             <div className={styles.formItem}>
               <input
                 className={styles.input}
                 name="username"
                 placeholder="请输入账号"
-                value={username}
-                onChange={this.handleChange}
+                value={values.username}
+                onChange={handleChange}
               />
             </div>
             {/* 长度为5到8位，只能出现数字、字母、下划线 */}
@@ -70,8 +45,8 @@ class Login extends Component {
                 name="password"
                 type="password"
                 placeholder="请输入密码"
-                value={password}
-                onChange={this.handleChange}
+                value={values.password}
+                onChange={handleChange}
               />
             </div>
             {/* 长度为5到12位，只能出现数字、字母、下划线 */}
@@ -92,5 +67,22 @@ class Login extends Component {
     )
   }
 }
+
+Login = withFormik({
+  // 状态
+  mapPropsToValues: () => ({ username: '', password: '' }),
+  // 表单提交事件
+  handleSubmit: async (values, {props}) => {
+    const { username, password } = values
+    const { data: {status, body, description} } = await API.post('/user/login', {username, password})
+    if (status === 200) {
+      Toast.info(description, 2, null, false)
+      localStorage.setItem('hkzf_token', body.token)
+      props.history.go(-1) // 无法直接用this获取到props，此处使用传入的第二个参数获取
+    } else {
+      Toast.info(description, 2, null, false)
+    }
+  }
+})(Login) // 返回高阶组件包装后的组件
 
 export default Login
