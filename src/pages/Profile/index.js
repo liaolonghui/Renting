@@ -35,13 +35,8 @@ export default class Profile extends Component {
     const { isLogin } = this.state
     if (!isLogin) return
     // 登录状态,发送请求,获取用户信息
-    const res = await API.get('/user', {
-      headers: {
-        authorization: localStorage.getItem('hkzf_token')
-      }
-    })
+    const res = await API.get('/user')
     const { status, description, body } = res.data
-    console.log(res)
     if (status === 200) {
       this.setState({
         userInfo: body
@@ -68,11 +63,7 @@ export default class Profile extends Component {
       {
         text: '确定', onPress: async () => {
           // 发送退出登录的请求 API.post(url,data,config)
-          const res = await API.post('/user/logout', null, {
-            headers: {
-              authorization: localStorage.getItem('hkzf_token')
-            }
-          })
+          const res = await API.post('/user/logout')
           const { status } = res.data
           if (status === 200) {
             // 退出成功,删除本地的token,恢复默认值,提示信息
