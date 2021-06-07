@@ -80,7 +80,12 @@ Login = withFormik({
     if (status === 200) {
       Toast.info(description, 2, null, false)
       localStorage.setItem('hkzf_token', body.token)
-      props.history.go(-1) // 无法直接用this获取到props，此处使用传入的第二个参数获取
+      // 有props.location.state则跳转到该地址
+      if (props.location.state) {
+        props.history.replace(props.location.state.from.pathname)
+      } else {
+        props.history.go(-1) // 无法直接用this获取到props，此处使用传入的第二个参数获取
+      }
     } else {
       Toast.info(description, 2, null, false)
     }

@@ -4,6 +4,8 @@ import Map from './pages/Map'
 import Home from './pages/Home'
 import HouseDetail from './pages/HouseDetail'
 import Login from './pages/Login'
+// 登陆访问控制路由
+import AuthRoute from './components/AuthRoute'
 
 function App() {
   return (
