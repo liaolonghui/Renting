@@ -11,7 +11,9 @@ import API from '../../utils/api'
 
 import styles from './index.module.css'
 
-const isLogin = () => true // 先放在这
+const isLogin = () => {
+  return !!localStorage.getItem('hkzf_token')
+}
 
 // 猜你喜欢
 const recommendHouses = [
@@ -100,53 +102,57 @@ export default class HouseDetail extends Component {
 
   // ------------------操作数据----------------
   // 1.进入页面,判断是否收藏了
-  // async checkFavorite() {
-  //   // 1.1 先判断有没有登录,未登录直接return,登录了发送请求,判断是否收藏过
-  //   if (!isLogin()) return
-  //   const { id } = this.props.match.params
-  //   const res = await API.get(`/user/favorites/${id}`)
-  //   this.setState({
-  //     isFavorite: res.data.body.isFavorite
-  //   })
-  // }
+  async checkFavorite() {
+    // 1.1 先判断有没有登录,未登录直接return,登录了发送请求,判断是否收藏过
+    if (!isLogin()) return
+    const { id } = this.props.match.params
+    const res = await API.get(`/user/favorites/${id}`)
+    this.setState({
+      isFavorite: res.data.body.isFavorite
+    })
+  }
   // 2.点击处理收藏
   // 点击的时候,判断有没有登录,如果没有登录去登录,登录的话,判断是否收藏了
-  // handleFavorite = async () => {
-  //   if (!isLogin()) {
-  //     // 没有登录,弹出确定框
-  //     alert('提示', '你尚未登录,请先去登录', [
-  //       { text: '取消' },
-  //       {
-  //         text: '去登录', onPress: () => {
-  //           this.props.history.push('/login')
-  //         }
-  //       }
-  //     ])
-  //   } else {
-  //     // 如果登录的话,判断是否收藏了
-  //     if(!this.state.isFavorite) {
-  //       // 未收藏,发送请求,添加收藏
-  //       const {id} = this.props.match.params
-  //       const res = await API.post(`/user/favorites/${id}`)
-  //       if (res.data.status === 200) {
-  //         this.setState({
-  //           isFavorite: true
-  //         })
-  //         Toast.success('收藏成功', 1.5)
-  //       }
-  //     } else {
-  //       // 收藏了,发送请求,删除收藏
-  //       const { id } = this.props.match.params
-  //       const res = await API.delete(`/user/favorites/${id}`) 
-  //       if(res.data.status === 200) {
-  //         this.setState({
-  //           isFavorite: false
-  //         })
-  //         Toast.success('删除收藏成功', 1.5)
-  //       }
-  //     }
-  //   }
-  // }
+  handleFavorite = async () => {
+    if (!isLogin()) {
+      // 没有登录,弹出确定框
+      alert('提示', '你尚未登录,请先去登录', [
+        { text: '取消' },
+        {
+          text: '去登录', onPress: () => {
+            this.props.history.push('/login')
+          }
+        }
+      ])
+    } else {
+      // 如果登录的话,判断是否收藏了
+      if(!this.state.isFavorite) {
+        // 未收藏,发送请求,添加收藏
+        const {id} = this.props.match.params
+        const res = await API.post(`/user/favorites/${id}`)
+        if (res.data.status === 200) {
+          this.setState({
+            isFavorite: true
+          })
+          Toast.success('收藏成功', 1.5)
+        } else {
+          Toast.error('登录超时，请重新登录', 1.5)
+        }
+      } else {
+        // 收藏了,发送请求,删除收藏
+        const { id } = this.props.match.params
+        const res = await API.delete(`/user/favorites/${id}`) 
+        if(res.data.status === 200) {
+          this.setState({
+            isFavorite: false
+          })
+          Toast.success('删除收藏成功', 1.5)
+        } else {
+          Toast.error('登录超时，请重新登录', 1.5)
+        }
+      }
+    }
+  }
 
   // -------------------钩子函数-----------------------
   render() {
@@ -285,13 +291,13 @@ export default class HouseDetail extends Component {
 
         {/* 底部收藏按钮 */}
         <Flex className={styles.fixedBottom} style={{ textAlign: 'center' }}>
-          <Flex.Item>
+          <Flex.Item onClick={this.handleFavorite}>
             <img
               src={BASE_URL + (isFavorite ? '/img/star.png' : '/img/unstar.png')}
               className={styles.favoriteImg}
               alt="收藏"
             />
-            <span onClick={this.handleFavorite} className={styles.favorite}>{isFavorite ? '已收藏' : '收藏'}</span>
+            <span className={styles.favorite}>{isFavorite ? '已收藏' : '收藏'}</span>
           </Flex.Item>
           <Flex.Item>在线咨询</Flex.Item>
           <Flex.Item>
@@ -315,8 +321,8 @@ export default class HouseDetail extends Component {
       houseInfo: res.data.body,
       isLoaded: true
     })
-    // // 一进入页面,检查是否收藏了
-    // this.checkFavorite()
+    // 一进入页面,检查是否收藏了
+    this.checkFavorite()
   }
 
   // ----------------------渲染元素----------------------
