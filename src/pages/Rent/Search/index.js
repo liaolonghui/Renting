@@ -5,7 +5,6 @@ import { SearchBar } from 'antd-mobile'
 import API from '../../../utils/api'
 
 import styles from './index.module.css'
-import _ from 'lodash'
 
 const getCity = () => {
   return JSON.parse(localStorage.getItem('hkzf_city'))
@@ -18,6 +17,7 @@ export default class Search extends Component {
   state = {
     // 搜索框的值
     searchTxt: '',
+    // 搜索到的列表
     tipsList: []
   }
   // 将异步请求的代码封装到searchCommunityList
@@ -28,38 +28,33 @@ export default class Search extends Component {
         id: this.cityId
       }
     })
-    console.log('搜索的结果是', res)
     this.setState({
       tipsList: res.data.body
     })
   }
-  // 防抖动,会返回一个新的函数
-  searchCommunityList = _.debounce(this.searchCommunityList, 500)
+  
   // 1.获取搜索关键字
-  getSearchKeys = async (val) => {
-    console.log('关键字', val)
+  getSearchKeys = async (val) => { // val是输入框的值
     this.setState({
       searchTxt: val
     })
-    // 1.2 如果搜索关键字为空,那么展示列表数组也应该为空
-    if (val.trim() === '') return this.setState({
-      tipsList: []
-    })
+    // 1.2 如果搜索关键字为空,那么展示列表数组也应该设置为空
+    if (val.trim() === '') return this.setState({ tipsList: [] })
 
-    this.searchCommunityList(val)
+    // debounce
     // 移除上一个延时器
-    // clearTimeout(this.timerId)
-    // 什么是防抖,我们输入一定的值,当值不再变化的时候,500毫秒之后再发送请求,
+    clearTimeout(this.timerId)
     // 1.1根据搜索关键字,发送请求,获取对应的小区
     // 添加延时器
-    // this.timerId = setTimeout(async () => {
-
-    // }, 2000)
+    this.timerId = setTimeout(async () => {
+      this.searchCommunityList(val)
+    }, 500)
   }
   // 渲染搜索结果列表
   renderTips = () => {
     const { tipsList } = this.state
 
+    // 点击了某一个列表项就会把对应的 (小区或地址)的id和name 在跳转页面时发送给/rent/add页面
     return tipsList.map(item => (
       <li onClick={() => this.props.history.replace('/rent/add', {
         name: item.communityName,
