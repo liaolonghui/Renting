@@ -96,7 +96,6 @@ export default class RentAdd extends Component {
 
   // 处理change事件
   handleChange = (name, val) => {
-    console.log(name, val)
     this.setState({
       [name]: val
     })
@@ -170,7 +169,8 @@ export default class RentAdd extends Component {
     }
   }
   render() {
-    const Item = List.Item
+    const Item = List.Item // List组件的使用  List  List.Item
+
     const { history } = this.props
     const {
       community,
@@ -188,6 +188,7 @@ export default class RentAdd extends Component {
       <div className={styles.root}>
         <NavHeader onLeftClick={this.onCancel}>发布房源</NavHeader>
 
+        {/* 房源信息的 */}
         <List
           className={styles.header}
           renderHeader={() => '房源信息'}  // 上面的标题
@@ -201,18 +202,20 @@ export default class RentAdd extends Component {
           >
             小区名称
           </Item>
+          {/* InputItem相当于form表单的input */}
+          {/* value与onChange */}
           <InputItem placeholder="请输入租金/月" extra="￥/月" value={price} onChange={(val) => this.handleChange('price', val)}>
             租&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;金
           </InputItem>
           <InputItem placeholder="请输入建筑面积" extra="㎡" value={size} onChange={(val) => this.handleChange('size', val)}>
             建筑面积
           </InputItem>
+          {/* Picker */}
           <Picker data={roomTypeData} value={[roomType]} cols={1} onChange={(val) => this.handleChange('roomType', val[0])}>
             <Item arrow="horizontal">
               户&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型
             </Item>
           </Picker>
-
           <Picker data={floorData} value={[floor]} cols={1} onChange={(val) => this.handleChange('floor', val[0])}>
             <Item arrow="horizontal">所在楼层</Item>
           </Picker>
@@ -223,6 +226,7 @@ export default class RentAdd extends Component {
           </Picker>
         </List>
 
+        {/* 房屋标题 */}
         <List
           className={styles.title}
           renderHeader={() => '房屋标题'}
@@ -235,6 +239,7 @@ export default class RentAdd extends Component {
           />
         </List>
 
+        {/* 房屋图像 */}
         <List
           className={styles.pics}
           renderHeader={() => '房屋图像'}
@@ -248,23 +253,26 @@ export default class RentAdd extends Component {
           />
         </List>
 
+        {/* 房屋配置 */}
         <List
           className={styles.supporting}
           renderHeader={() => '房屋配置'}
           data-role="rent-list"
         >
-          <HousePackge select onSelect={(val) => {
+          <HousePackge select onSelect={(val) => {  // 获得选中的房屋配置
             this.setState({
               supporting: val.join('|')
             })
           }} />
         </List>
 
+        {/* 房屋描述 */}
         <List
           className={styles.desc}
           renderHeader={() => '房屋描述'}
           data-role="rent-list"
         >
+          {/* textarea */}
           <TextareaItem
             rows={5}
             placeholder="请输入房屋描述信息"
@@ -286,7 +294,7 @@ export default class RentAdd extends Component {
     )
   }
   componentDidMount() {
-    // 页面一进来,拿到传递过来的值
+    // 页面一进来,拿到传递过来的值（其实是RentSearch页面传过来的community信息，包括id和name）
     if (this.props.location.state) {
       this.setState({
         community: this.props.location.state
