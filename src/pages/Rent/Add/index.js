@@ -100,7 +100,7 @@ export default class RentAdd extends Component {
       [name]: val
     })
   }
-  // 处理图片
+  // 处理图片（选择房屋图片后的处理）
   handleImg = (files) => {
     console.log(files)
     this.setState({
@@ -122,22 +122,24 @@ export default class RentAdd extends Component {
       floor,
       community
     } = this.state
-    // 1.1发送上传图片的请求,拿到图片路径
-    if (tempSlides.length === 0) return
-    const fd = new FormData()
+    // 1.1发送上传图片的请求,拿到图片路径 （此时才是真正的把图片上传到服务器）
+    // 没有图片则不进行发布房源操作
+    if (tempSlides.length === 0) return Toast.info('请添加房屋图像后再上传房源', 1.5)
+    const form = new FormData() // 将图片转换为formdata数据后再上传
     tempSlides.forEach(item => {
-      fd.append('file', item.file) // item.file是图片对象
+      form.append('file', item.file) // item.file是图片对象
     })
     // 发送上传图片的请求 注意的是: 图片是一张一张上传的
-    const res = await API.post('/houses/image', fd, {
+    const res = await API.post('/houses/image', form, {
       headers: {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data' // multipart/form-data
       }
     })
+    // 通过图片上传接口先将图片上传到服务器，再把返回的信息(即图片的地址)添加到房屋的信息中，继续发布房源
     console.log('上传图片的结果', res)
     if (res.data.status === 200) {
       Toast.success('图片上传成功', 1.5)
-      let houseImg = res.data.body.join('|') // 将数组拼接成字符串
+      let houseImg = res.data.body.join('|') // 将房屋图片地址数组拼接成字符串
       // 发送发布文章的请求
       const result = await API.post('/user/houses', {
         title,
@@ -165,7 +167,7 @@ export default class RentAdd extends Component {
       }
 
     } else {
-      Toast.fail('上传图片失败', 1.5)
+      Toast.fail('上传图片失败，无法发布房源。', 1.5)
     }
   }
   render() {
@@ -211,6 +213,8 @@ export default class RentAdd extends Component {
             建筑面积
           </InputItem>
           {/* Picker */}
+          {/* value是数组，即所有可选项 */}
+          {/* 选中项也是数组，所以取val[0] */}
           <Picker data={roomTypeData} value={[roomType]} cols={1} onChange={(val) => this.handleChange('roomType', val[0])}>
             <Item arrow="horizontal">
               户&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型
@@ -245,6 +249,8 @@ export default class RentAdd extends Component {
           renderHeader={() => '房屋图像'}
           data-role="rent-list"
         >
+          {/* 图片选择器 */}
+          {/* 通过onChange来获取到图片 */}
           <ImagePicker
             files={tempSlides}  // 图片文件数组,元素为对象,必须包含url
             multiple={true}     // 支持多张
@@ -259,7 +265,7 @@ export default class RentAdd extends Component {
           renderHeader={() => '房屋配置'}
           data-role="rent-list"
         >
-          <HousePackge select onSelect={(val) => {  // 获得选中的房屋配置
+          <HousePackge select onSelect={(val) => {  // 获得选中的房屋配置并使用|将每一项隔开生成一个字符串supporting
             this.setState({
               supporting: val.join('|')
             })
