@@ -61,7 +61,7 @@ export default class Index extends React.Component {
 
   // 获取资讯数据
   async getNews() {
-    const value = encodeURIComponent(JSON.parse(localStorage.getItem('hkzf_city')).value) || 'AREA%7C88cff55c-aaa4-e2e0'
+    const value = 'AREA%7C88cff55c-aaa4-e2e0'
     const res = await API.get(`/home/news?area=${value}`)
     this.setState({
       news: res.data.body
@@ -72,7 +72,7 @@ export default class Index extends React.Component {
   async getGroups() {
     const res = await API.get('/home/groups', {
       params: {
-        area: encodeURIComponent(JSON.parse(localStorage.getItem('hkzf_city')).value) || 'AREA%7C88cff55c-aaa4-e2e0'
+        area: 'AREA%7C88cff55c-aaa4-e2e0'
       }
     })
     this.setState({

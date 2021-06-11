@@ -2,9 +2,9 @@ import API from './api'
 
 // 封装获取当前定位城市的函数
 export const getCurrentCity = () => {
-  const localCity = JSON.parse(localStorage.getItem('hkzf_city'))
+  const localCity = localStorage.getItem('hkzf_city')
   
-  if (!localCity) {
+  if (localCity) {
     // 没有则去获取  返回一个Promise
     return new Promise((resolve, reject) => {
       window.AMap.plugin('AMap.CitySearch', function() {
@@ -30,6 +30,6 @@ export const getCurrentCity = () => {
     })
   }
 
-  return Promise.resolve(localCity)
+  return Promise.resolve(JSON.parse(localCity))
 
 }
