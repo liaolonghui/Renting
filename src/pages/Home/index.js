@@ -7,9 +7,9 @@ import './index.css'
 
 // 各组件
 import Index from '../Index'
-import HouseList from '../HouseList'
-import News from '../News'
-import Profile from '../Profile'
+const HouseList = React.lazy(() => import('../HouseList'))
+const News = React.lazy(() => import('../News'))
+const Profile = React.lazy(() => import('../Profile'))
 
 
 // TabBar的数据
